@@ -22,7 +22,7 @@
 #include <stdbool.h>
 
 struct ubpf_vm;
-typedef uint64_t (*ubpf_jit_fn)(void *mem, size_t mem_len);
+//typedef uint64_t (*ubpf_jit_fn)(void *mem, size_t mem_len);
 
 struct ubpf_vm *ubpf_create(void);
 void ubpf_destroy(struct ubpf_vm *vm);
@@ -34,7 +34,7 @@ void ubpf_destroy(struct ubpf_vm *vm);
  * Pass true to enable, false to disable
  * Returns previous state
  */
-bool toggle_bounds_check(struct ubpf_vm *vm, bool enable);
+//bool toggle_bounds_check(struct ubpf_vm *vm, bool enable);
 
 /*
  * Register an external function
@@ -47,7 +47,7 @@ bool toggle_bounds_check(struct ubpf_vm *vm, bool enable);
  *
  * Returns 0 on success, -1 on error.
  */
-int ubpf_register(struct ubpf_vm *vm, unsigned int idx, const char *name, void *fn);
+//int ubpf_register(struct ubpf_vm *vm, unsigned int idx, const char *name, void *fn);
 
 /*
  * Load code into a VM
@@ -61,7 +61,7 @@ int ubpf_register(struct ubpf_vm *vm, unsigned int idx, const char *name, void *
  * Returns 0 on success, -1 on error. In case of error a pointer to the error
  * message will be stored in 'errmsg' and should be freed by the caller.
  */
-int ubpf_load(struct ubpf_vm *vm, const void *code, uint32_t code_len, char **errmsg);
+//int ubpf_load(struct ubpf_vm *vm, const void *code);
 
 /*
  * Load code from an ELF file
@@ -79,10 +79,10 @@ int ubpf_load(struct ubpf_vm *vm, const void *code, uint32_t code_len, char **er
  * Returns 0 on success, -1 on error. In case of error a pointer to the error
  * message will be stored in 'errmsg' and should be freed by the caller.
  */
-int ubpf_load_elf(struct ubpf_vm *vm, const void *elf, size_t elf_len, char **errmsg);
+//int ubpf_load_elf(struct ubpf_vm *vm, const void *elf, size_t elf_len, char **errmsg);
 
-uint64_t ubpf_exec(const struct ubpf_vm *vm, void *mem, size_t mem_len);
+uint64_t ubpf_exec(const struct ubpf_vm *vm, void *mem);
 
-ubpf_jit_fn ubpf_compile(struct ubpf_vm *vm, char **errmsg);
+//ubpf_jit_fn ubpf_compile(struct ubpf_vm *vm, char **errmsg);
 
 #endif

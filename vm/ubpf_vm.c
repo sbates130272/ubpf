@@ -24,7 +24,7 @@
 #include <sys/mman.h>
 #include "ubpf_int.h"
 
-#define MAX_EXT_FUNCS 64
+/*#define MAX_EXT_FUNCS 64
 
 static bool validate(const struct ubpf_vm *vm, const struct ebpf_inst *insts, uint32_t num_insts, char **errmsg);
 static bool bounds_check(const struct ubpf_vm *vm, void *addr, int size, const char *type, uint16_t cur_pc, void *mem, size_t mem_len, void *stack);
@@ -35,7 +35,7 @@ bool toggle_bounds_check(struct ubpf_vm *vm, bool enable)
   vm->bounds_check_enabled = enable;
   return old;
 }
-
+*/
 struct ubpf_vm *
 ubpf_create(void)
 {
@@ -44,7 +44,7 @@ ubpf_create(void)
         return NULL;
     }
 
-    vm->ext_funcs = calloc(MAX_EXT_FUNCS, sizeof(*vm->ext_funcs));
+/*    vm->ext_funcs = calloc(MAX_EXT_FUNCS, sizeof(*vm->ext_funcs));
     if (vm->ext_funcs == NULL) {
         ubpf_destroy(vm);
         return NULL;
@@ -56,23 +56,23 @@ ubpf_create(void)
         return NULL;
     }
 
-    vm->bounds_check_enabled = true;
+    vm->bounds_check_enabled = true;*/
     return vm;
 }
 
 void
 ubpf_destroy(struct ubpf_vm *vm)
 {
-    if (vm->jitted) {
-        munmap(vm->jitted, vm->jitted_size);
-    }
+    //if (vm->jitted) {
+    //    munmap(vm->jitted, vm->jitted_size);
+    //}
     free(vm->insts);
-    free(vm->ext_funcs);
-    free(vm->ext_func_names);
+    //free(vm->ext_funcs);
+    //free(vm->ext_func_names);
     free(vm);
 }
 
-int
+/*int
 ubpf_register(struct ubpf_vm *vm, unsigned int idx, const char *name, void *fn)
 {
     if (idx >= MAX_EXT_FUNCS) {
@@ -96,8 +96,8 @@ ubpf_lookup_registered_function(struct ubpf_vm *vm, const char *name)
     }
     return -1;
 }
-
-int
+*/
+/*int
 ubpf_load(struct ubpf_vm *vm, const void *code, uint32_t code_len, char **errmsg)
 {
     *errmsg = NULL;
@@ -126,7 +126,7 @@ ubpf_load(struct ubpf_vm *vm, const void *code, uint32_t code_len, char **errmsg
     vm->num_insts = code_len/sizeof(vm->insts[0]);
 
     return 0;
-}
+    }*/
 
 static uint32_t
 u32(uint64_t x)
@@ -135,7 +135,7 @@ u32(uint64_t x)
 }
 
 uint64_t
-ubpf_exec(const struct ubpf_vm *vm, void *mem, size_t mem_len)
+ubpf_exec(const struct ubpf_vm *vm, void *mem)
 {
     uint16_t pc = 0;
     const struct ebpf_inst *insts = vm->insts;
@@ -372,67 +372,55 @@ ubpf_exec(const struct ubpf_vm *vm, void *mem, size_t mem_len)
          *
          * Needed since we don't have a verifier yet.
          */
-#define BOUNDS_CHECK_LOAD(size) \
-    do { \
-        if (!bounds_check(vm, (void *)reg[inst.src] + inst.offset, size, "load", cur_pc, mem, mem_len, stack)) { \
-            return UINT64_MAX; \
-        } \
-    } while (0)
-#define BOUNDS_CHECK_STORE(size) \
-    do { \
-        if (!bounds_check(vm, (void *)reg[inst.dst] + inst.offset, size, "store", cur_pc, mem, mem_len, stack)) { \
-            return UINT64_MAX; \
-        } \
-    } while (0)
 
         case EBPF_OP_LDXW:
-            BOUNDS_CHECK_LOAD(4);
+//            BOUNDS_CHECK_LOAD(4);
             reg[inst.dst] = *(uint32_t *)(uintptr_t)(reg[inst.src] + inst.offset);
             break;
         case EBPF_OP_LDXH:
-            BOUNDS_CHECK_LOAD(2);
+//            BOUNDS_CHECK_LOAD(2);
             reg[inst.dst] = *(uint16_t *)(uintptr_t)(reg[inst.src] + inst.offset);
             break;
         case EBPF_OP_LDXB:
-            BOUNDS_CHECK_LOAD(1);
+//            BOUNDS_CHECK_LOAD(1);
             reg[inst.dst] = *(uint8_t *)(uintptr_t)(reg[inst.src] + inst.offset);
             break;
         case EBPF_OP_LDXDW:
-            BOUNDS_CHECK_LOAD(8);
+//            BOUNDS_CHECK_LOAD(8);
             reg[inst.dst] = *(uint64_t *)(uintptr_t)(reg[inst.src] + inst.offset);
             break;
 
         case EBPF_OP_STW:
-            BOUNDS_CHECK_STORE(4);
+//            BOUNDS_CHECK_STORE(4);
             *(uint32_t *)(uintptr_t)(reg[inst.dst] + inst.offset) = inst.imm;
             break;
         case EBPF_OP_STH:
-            BOUNDS_CHECK_STORE(2);
+//            BOUNDS_CHECK_STORE(2);
             *(uint16_t *)(uintptr_t)(reg[inst.dst] + inst.offset) = inst.imm;
             break;
         case EBPF_OP_STB:
-            BOUNDS_CHECK_STORE(1);
+//            BOUNDS_CHECK_STORE(1);
             *(uint8_t *)(uintptr_t)(reg[inst.dst] + inst.offset) = inst.imm;
             break;
         case EBPF_OP_STDW:
-            BOUNDS_CHECK_STORE(8);
+//            BOUNDS_CHECK_STORE(8);
             *(uint64_t *)(uintptr_t)(reg[inst.dst] + inst.offset) = inst.imm;
             break;
 
         case EBPF_OP_STXW:
-            BOUNDS_CHECK_STORE(4);
+//            BOUNDS_CHECK_STORE(4);
             *(uint32_t *)(uintptr_t)(reg[inst.dst] + inst.offset) = reg[inst.src];
             break;
         case EBPF_OP_STXH:
-            BOUNDS_CHECK_STORE(2);
+//            BOUNDS_CHECK_STORE(2);
             *(uint16_t *)(uintptr_t)(reg[inst.dst] + inst.offset) = reg[inst.src];
             break;
         case EBPF_OP_STXB:
-            BOUNDS_CHECK_STORE(1);
+//            BOUNDS_CHECK_STORE(1);
             *(uint8_t *)(uintptr_t)(reg[inst.dst] + inst.offset) = reg[inst.src];
             break;
         case EBPF_OP_STXDW:
-            BOUNDS_CHECK_STORE(8);
+//            BOUNDS_CHECK_STORE(8);
             *(uint64_t *)(uintptr_t)(reg[inst.dst] + inst.offset) = reg[inst.src];
             break;
 
@@ -555,13 +543,14 @@ ubpf_exec(const struct ubpf_vm *vm, void *mem, size_t mem_len)
             break;
         case EBPF_OP_EXIT:
             return reg[0];
-        case EBPF_OP_CALL:
-            reg[0] = vm->ext_funcs[inst.imm](reg[1], reg[2], reg[3], reg[4], reg[5]);
-            break;
+//        case EBPF_OP_CALL:
+//            reg[0] = vm->ext_funcs[inst.imm](reg[1], reg[2], reg[3], reg[4], reg[5]);
+//            break;
         }
     }
 }
 
+#ifdef FALSE
 static bool
 validate(const struct ubpf_vm *vm, const struct ebpf_inst *insts, uint32_t num_insts, char **errmsg)
 {
@@ -701,10 +690,10 @@ validate(const struct ubpf_vm *vm, const struct ebpf_inst *insts, uint32_t num_i
                 *errmsg = ubpf_error("invalid call immediate at PC %d", i);
                 return false;
             }
-            if (!vm->ext_funcs[inst.imm]) {
-                *errmsg = ubpf_error("call to nonexistent function %u at PC %d", inst.imm, i);
-                return false;
-            }
+//            if (!vm->ext_funcs[inst.imm]) {
+//                *errmsg = ubpf_error("call to nonexistent function %u at PC %d", inst.imm, i);
+//                return false;
+//            }
             break;
 
         case EBPF_OP_EXIT:
@@ -738,34 +727,35 @@ validate(const struct ubpf_vm *vm, const struct ebpf_inst *insts, uint32_t num_i
 
     return true;
 }
+#endif
 
-static bool
-bounds_check(const struct ubpf_vm *vm, void *addr, int size, const char *type, uint16_t cur_pc, void *mem, size_t mem_len, void *stack)
-{
-    if (!vm->bounds_check_enabled)
-        return true;
-    if (mem && (addr >= mem && (addr + size) <= (mem + mem_len))) {
-        /* Context access */
-        return true;
-    } else if (addr >= stack && (addr + size) <= (stack + STACK_SIZE)) {
-        /* Stack access */
-        return true;
-    } else {
-        fprintf(stderr, "uBPF error: out of bounds memory %s at PC %u, addr %p, size %d\n", type, cur_pc, addr, size);
-        fprintf(stderr, "mem %p/%zd stack %p/%d\n", mem, mem_len, stack, STACK_SIZE);
-        return false;
-    }
-}
-
-char *
-ubpf_error(const char *fmt, ...)
-{
-    char *msg;
-    va_list ap;
-    va_start(ap, fmt);
-    if (vasprintf(&msg, fmt, ap) < 0) {
-        msg = NULL;
-    }
-    va_end(ap);
-    return msg;
-}
+//static bool
+//bounds_check(const struct ubpf_vm *vm, void *addr, int size, const char *type, uint16_t cur_pc, void *mem, size_t mem_len, void *stack)
+//{
+//    if (!vm->bounds_check_enabled)
+//        return true;
+//    if (mem && (addr >= mem && (addr + size) <= (mem + mem_len))) {
+//        /* Context access */
+//        return true;
+//    } else if (addr >= stack && (addr + size) <= (stack + STACK_SIZE)) {
+//        /* Stack access */
+//        return true;
+//    } else {
+//        fprintf(stderr, "uBPF error: out of bounds memory %s at PC %u, addr %p, size %d\n", type, cur_pc, addr, size);
+//        fprintf(stderr, "mem %p/%zd stack %p/%d\n", mem, mem_len, stack, STACK_SIZE);
+//        return false;
+//    }
+//}
+//
+//char *
+//ubpf_error(const char *fmt, ...)
+//{
+//    char *msg;
+//    va_list ap;
+//    va_start(ap, fmt);
+//    if (vasprintf(&msg, fmt, ap) < 0) {
+//        msg = NULL;
+//    }
+//    va_end(ap);
+//    return msg;
+//}

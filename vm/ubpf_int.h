@@ -24,19 +24,19 @@
 #define STACK_SIZE 128
 
 struct ebpf_inst;
-typedef uint64_t (*ext_func)(uint64_t arg0, uint64_t arg1, uint64_t arg2, uint64_t arg3, uint64_t arg4);
+//typedef uint64_t (*ext_func)(uint64_t arg0, uint64_t arg1, uint64_t arg2, uint64_t arg3, uint64_t arg4);
 
 struct ubpf_vm {
     struct ebpf_inst *insts;
     uint16_t num_insts;
-    ubpf_jit_fn jitted;
-    size_t jitted_size;
-    ext_func *ext_funcs;
-    const char **ext_func_names;
-    bool bounds_check_enabled;
+//    ubpf_jit_fn jitted;
+//    size_t jitted_size;
+//    ext_func *ext_funcs;
+//    const char **ext_func_names;
+//    bool bounds_check_enabled;
 };
 
-char *ubpf_error(const char *fmt, ...);
-unsigned int ubpf_lookup_registered_function(struct ubpf_vm *vm, const char *name);
+//char *ubpf_error(const char *fmt, ...);
+//unsigned int ubpf_lookup_registered_function(struct ubpf_vm *vm, const char *name);
 
 #endif

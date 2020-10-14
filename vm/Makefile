@@ -38,6 +38,8 @@ libubpf.a: ubpf_vm.o ubpf_jit_x86_64.o ubpf_loader.o
 
 test: test.o libubpf.a
 
+minimal: ubpf_vm.o minimal.o
+
 install:
 	$(INSTALL) -d $(DESTDIR)$(PREFIX)/lib
 	$(INSTALL) -m 644 libubpf.a $(DESTDIR)$(PREFIX)/lib
